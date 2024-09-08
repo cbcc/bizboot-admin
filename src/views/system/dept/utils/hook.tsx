@@ -2,10 +2,10 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { createDept, findDepts } from "@/api/system";
+import { createDept, deleteDept, findDepts, updateDept } from "@/api/system";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
-import { reactive, ref, onMounted, h, toRaw } from "vue";
+import { h, onMounted, reactive, ref, toRaw } from "vue";
 import type { FormItemProps } from "../utils/types";
 import { cloneDeep, deviceDetection } from "@pureadmin/utils";
 import { filterNotEmpty } from "@/utils";
@@ -46,9 +46,9 @@ export function useDept() {
     {
       label: "创建时间",
       minWidth: 200,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      prop: "createdTime",
+      formatter: ({ createdTime }) =>
+        dayjs(createdTime).format("YYYY-MM-DD HH:mm:ss")
     },
     {
       label: "备注",
@@ -77,6 +77,9 @@ export function useDept() {
     loading.value = true;
     const { content } = await findDepts(filterNotEmpty(toRaw(form))); // 这里是返回一维数组结构，前端自行处理成树结构
     let newData = content;
+    const a = dayjs("2024-09-08T17:27:07").format("YYYY-MM-DD HH:mm:ss");
+    console.log(a);
+    debugger;
     dataList.value = handleTree(newData); // 处理成树结构
     setTimeout(() => {
       loading.value = false;
@@ -96,12 +99,12 @@ export function useDept() {
   }
 
   function openDialog(title = "新增", row?: FormItemProps) {
-    debugger;
     addDialog({
       title: `${title}部门`,
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
+          id: row?.id,
           parentId: row?.parentId ?? 0,
           name: row?.name ?? "",
           type: row?.type ?? null,
@@ -126,9 +129,8 @@ export function useDept() {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
             const deptModel = {
               parentId: curData.parentId,
               name: curData.name,
@@ -138,10 +140,10 @@ export function useDept() {
               remark: curData.remark
             };
             if (title === "新增") {
-              createDept(deptModel);
+              await createDept(deptModel);
               chores();
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
+              await updateDept(curData.id, deptModel);
               chores();
             }
           }
@@ -150,8 +152,9 @@ export function useDept() {
     });
   }
 
-  function handleDelete(row) {
-    message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
+  async function handleDelete(id: number) {
+    await deleteDept(id);
+    message("删除成功", { type: "success" });
     onSearch();
   }
 

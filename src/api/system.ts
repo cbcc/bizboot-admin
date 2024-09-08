@@ -58,6 +58,16 @@ export const createDept = (data?: object) => {
   return http.request<Dept>("post", baseUrlApi("/depts"), { data });
 };
 
+/** 部门-修改 */
+export const updateDept = (id: number, data?: object) => {
+  return http.request<Dept>("put", baseUrlApi(`/depts/${id}`), { data });
+};
+
+/** 部门-删除 */
+export const deleteDept = (id: number) => {
+  return http.request<Dept>("delete", baseUrlApi(`/depts/${id}`));
+};
+
 /** 获取角色管理-权限-菜单权限 */
 export const getRoleMenu = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/role-menu"), { data });

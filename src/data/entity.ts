@@ -24,8 +24,8 @@ export type Page = {
 
 export type BaseData = {
   id: number;
-  createdDate: Date;
+  createdTime: string;
   createdBy: string;
-  lastModifiedDate: Date;
+  lastModifiedTime: string;
   lastModifiedBy: string;
 };

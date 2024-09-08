@@ -8,6 +8,7 @@ import { usePublicHooks } from "../hooks";
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     higherDeptOptions: [],
+    id: null,
     parentId: 0,
     name: "",
     type: null,
