@@ -1,0 +1,31 @@
+/**
+ * 部门
+ */
+export type Dept = BaseData & {
+  parentId?: number;
+  name: string;
+  type: number;
+  sort?: number;
+  enabled: boolean;
+  remark: string;
+};
+
+export type PageResult<T> = {
+  content: Array<T>;
+  page: Page;
+};
+
+export type Page = {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+export type BaseData = {
+  id: number;
+  createdDate: Date;
+  createdBy: string;
+  lastModifiedDate: Date;
+  lastModifiedBy: string;
+};
