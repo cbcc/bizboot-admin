@@ -1,6 +1,6 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-import type { Dept, PageResult } from "@/data/entity";
+import type { Dept, PageResult, Role } from "@/data/entity";
 
 type Result = {
   success: boolean;
@@ -36,11 +36,6 @@ export const getRoleIds = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/list-role-ids"), { data });
 };
 
-/** 获取系统管理-角色管理列表 */
-export const getRoleList = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("/role"), { data });
-};
-
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/menu"), { data });
@@ -60,12 +55,41 @@ export const createDept = (data?: object) => {
 
 /** 部门-修改 */
 export const updateDept = (id: number, data?: object) => {
-  return http.request<Dept>("put", baseUrlApi(`/depts/${id}`), { data });
+  return http.request<null>("put", baseUrlApi(`/depts/${id}`), { data });
 };
 
 /** 部门-删除 */
 export const deleteDept = (id: number) => {
-  return http.request<Dept>("delete", baseUrlApi(`/depts/${id}`));
+  return http.request<null>("delete", baseUrlApi(`/depts/${id}`));
+};
+
+/** 角色-分页查询 */
+export const findRoles = (params?: object) => {
+  return http.request<PageResult<Role>>("get", baseUrlApi("/roles"), {
+    params
+  });
+};
+
+/** 角色-新增 */
+export const createRole = (data?: object) => {
+  return http.request<Role>("post", baseUrlApi("/roles"), { data });
+};
+
+/** 角色-修改 */
+export const updateRole = (id: number, data?: object) => {
+  return http.request<null>("put", baseUrlApi(`/roles/${id}`), { data });
+};
+
+/** 角色-修改状态 */
+export const updateRoleEnabled = (id: number, data?: object) => {
+  return http.request<null>("patch", baseUrlApi(`/roles/${id}/enabled`), {
+    data
+  });
+};
+
+/** 角色-删除 */
+export const deleteRole = (id: number) => {
+  return http.request<null>("delete", baseUrlApi(`/roles/${id}`));
 };
 
 /** 获取角色管理-权限-菜单权限 */

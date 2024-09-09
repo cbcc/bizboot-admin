@@ -101,41 +101,39 @@ export default defineFakeRoute([
   },
   // 角色管理
   {
-    url: "/api/role",
-    method: "post",
-    response: ({ body }) => {
-      let list = [
-        {
-          createTime: 1605456000000, // 时间戳（毫秒ms）
-          updateTime: 1684512000000,
-          id: 1,
-          name: "超级管理员",
-          code: "admin",
-          status: 1, // 状态 1 启用 0 停用
-          remark: "超级管理员拥有最高权限"
-        },
-        {
-          createTime: 1605456000000,
-          updateTime: 1684512000000,
-          id: 2,
-          name: "普通角色",
-          code: "common",
-          status: 1,
-          remark: "普通角色拥有部分权限"
-        }
-      ];
-      list = list.filter(item => item.name.includes(body?.name));
-      list = list.filter(item =>
-        String(item.status).includes(String(body?.status))
-      );
-      if (body.code) list = list.filter(item => item.code === body.code);
+    url: "/api/roles",
+    method: "get",
+    response: () => {
       return {
-        success: true,
-        data: {
-          list,
-          total: list.length, // 总条目数
-          pageSize: 10, // 每页显示条目个数
-          currentPage: 1 // 当前页数
+        content: [
+          {
+            id: 1,
+            name: "超级管理员",
+            code: "admin",
+            enabled: true,
+            remark: "超级管理员拥有最高权限",
+            createdTime: "2024-09-09T07:44:28",
+            createdBy: "system",
+            lastModifiedTime: "2024-09-09T07:47:41",
+            lastModifiedBy: "system"
+          },
+          {
+            id: 2,
+            name: "群众",
+            code: "people",
+            enabled: false,
+            remark: "人民",
+            createdTime: "2024-09-09T07:45:03",
+            createdBy: "system",
+            lastModifiedTime: "2024-09-09T07:48:11",
+            lastModifiedBy: "system"
+          }
+        ],
+        page: {
+          size: 20,
+          number: 0,
+          totalElements: 2,
+          totalPages: 1
         }
       };
     }

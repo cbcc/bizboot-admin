@@ -10,6 +10,16 @@ export type Dept = BaseData & {
   remark: string;
 };
 
+/**
+ * 角色
+ */
+export type Role = BaseData & {
+  name: string;
+  code: string;
+  enabled: boolean;
+  remark: string;
+};
+
 export type PageResult<T> = {
   content: Array<T>;
   page: Page;
