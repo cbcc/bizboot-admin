@@ -9,25 +9,24 @@ const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     title: "新增",
     higherDeptOptions: [],
-    parentId: 0,
     nickname: "",
     username: "",
-    password: "",
+    gender: null,
+    deptId: null,
     phone: "",
-    email: "",
-    sex: "",
-    status: 1,
-    remark: ""
+    email: null,
+    password: "",
+    enabled: true
   })
 });
 
-const sexOptions = [
+const genderOptions = [
   {
-    value: 0,
+    value: 1,
     label: "男"
   },
   {
-    value: 1,
+    value: 2,
     label: "女"
   }
 ];
@@ -105,13 +104,13 @@ defineExpose({ getRef });
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户性别">
           <el-select
-            v-model="newFormInline.sex"
+            v-model="newFormInline.gender"
             placeholder="请选择用户性别"
             class="w-full"
             clearable
           >
             <el-option
-              v-for="(item, index) in sexOptions"
+              v-for="(item, index) in genderOptions"
               :key="index"
               :label="item.label"
               :value="item.value"
@@ -121,9 +120,9 @@ defineExpose({ getRef });
       </re-col>
 
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="归属部门">
+        <el-form-item label="归属部门" prop="deptId">
           <el-cascader
-            v-model="newFormInline.parentId"
+            v-model="newFormInline.deptId"
             class="w-full"
             :options="newFormInline.higherDeptOptions"
             :props="{
@@ -143,31 +142,16 @@ defineExpose({ getRef });
           </el-cascader>
         </el-form-item>
       </re-col>
-      <re-col
-        v-if="newFormInline.title === '新增'"
-        :value="12"
-        :xs="24"
-        :sm="24"
-      >
+      <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户状态">
           <el-switch
-            v-model="newFormInline.status"
+            v-model="newFormInline.enabled"
             inline-prompt
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="true"
+            :inactive-value="false"
             active-text="启用"
             inactive-text="停用"
             :style="switchStyle"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col>
-        <el-form-item label="备注">
-          <el-input
-            v-model="newFormInline.remark"
-            placeholder="请输入备注信息"
-            type="textarea"
           />
         </el-form-item>
       </re-col>

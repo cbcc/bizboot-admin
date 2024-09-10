@@ -4,99 +4,51 @@ import { faker } from "@faker-js/faker/locale/zh_CN";
 export default defineFakeRoute([
   // 用户管理
   {
-    url: "/api/user",
-    method: "post",
-    response: ({ body }) => {
-      let list = [
-        {
-          avatar: "https://avatars.githubusercontent.com/u/44761321",
-          username: "admin",
-          nickname: "小铭",
-          phone: "15888886789",
-          email: faker.internet.email(),
-          sex: 0,
-          id: 1,
-          status: 1,
-          dept: {
-            // 部门id
-            id: 103,
-            // 部门名称
-            name: "研发部门"
-          },
-          remark: "管理员",
-          createTime: 1605456000000
-        },
-        {
-          avatar: "https://avatars.githubusercontent.com/u/52823142",
-          username: "common",
-          nickname: "小林",
-          phone: "18288882345",
-          email: faker.internet.email(),
-          sex: 1,
-          id: 2,
-          status: 1,
-          dept: {
-            id: 105,
-            name: "测试部门"
-          },
-          remark: "普通用户",
-          createTime: 1605456000000
-        }
-      ];
-      list = list.filter(item => item.username.includes(body?.username));
-      list = list.filter(item =>
-        String(item.status).includes(String(body?.status))
-      );
-      if (body.phone) list = list.filter(item => item.phone === body.phone);
-      if (body.deptId) list = list.filter(item => item.dept.id === body.deptId);
-      return {
-        success: true,
-        data: {
-          list,
-          total: list.length, // 总条目数
-          pageSize: 10, // 每页显示条目个数
-          currentPage: 1 // 当前页数
-        }
-      };
-    }
-  },
-  // 用户管理-获取所有角色列表
-  {
-    url: "/api/list-all-role",
+    url: "/api/users",
     method: "get",
     response: () => {
       return {
-        success: true,
-        data: [
-          { id: 1, name: "超级管理员" },
-          { id: 2, name: "普通角色" }
-        ]
-      };
-    }
-  },
-  // 用户管理-根据 userId 获取对应角色 id 列表（userId：用户id）
-  {
-    url: "/api/list-role-ids",
-    method: "post",
-    response: ({ body }) => {
-      if (body.userId) {
-        if (body.userId == 1) {
-          return {
-            success: true,
-            data: [1]
-          };
-        } else if (body.userId == 2) {
-          return {
-            success: true,
-            data: [2]
-          };
+        content: [
+          {
+            id: 1,
+            uid: "0001",
+            username: "孙悟空",
+            nickname: "猴子",
+            gender: 1,
+            phone: "12345676789",
+            email: faker.internet.email(),
+            password: "123456",
+            enabled: true,
+            createdTime: "2024-09-10T07:37:16",
+            createdBy: "system",
+            lastModifiedTime: "2024-09-10T09:22:27",
+            lastModifiedBy: "system",
+            dept: null
+          },
+          {
+            id: 2,
+            uid: "7e7898a010ea4b17bc3143553c8694c5",
+            username: "猪悟能",
+            nickname: "八戒",
+            gender: 1,
+            phone: "12345676789",
+            email: faker.internet.email(),
+            password: "123456",
+            enabled: false,
+            createdTime: "2024-09-09T23:40:11",
+            createdBy: "system",
+            lastModifiedTime: "2024-09-10T09:27:34",
+            lastModifiedBy: "system",
+            dept: null
+          }
+        ],
+        page: {
+          size: 20,
+          number: 0,
+          totalElements: 2,
+          totalPages: 1
         }
-      } else {
-        return {
-          success: false,
-          data: []
-        };
-      }
+      };
     }
   },
   // 角色管理
@@ -1249,7 +1201,7 @@ export default defineFakeRoute([
   },
   // 部门管理
   {
-    url: "1/api/depts",
+    url: "/api/depts",
     method: "get",
     response: () => {
       return {

@@ -1,4 +1,19 @@
 /**
+ * 用户
+ */
+export type User = BaseData & {
+  uid: string;
+  username: string;
+  nickname?: string;
+  gender?: number;
+  phone: string | number;
+  email?: string;
+  password: string;
+  enabled: boolean;
+  dept?: Dept;
+};
+
+/**
  * 部门
  */
 export type Dept = BaseData & {
@@ -7,7 +22,7 @@ export type Dept = BaseData & {
   type: number;
   sort?: number;
   enabled: boolean;
-  remark: string;
+  remark?: string;
 };
 
 /**
@@ -17,7 +32,7 @@ export type Role = BaseData & {
   name: string;
   code: string;
   enabled: boolean;
-  remark: string;
+  remark?: string;
 };
 
 export type PageResult<T> = {

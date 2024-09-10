@@ -18,10 +18,15 @@ import {
   deviceDetection
 } from "@pureadmin/utils";
 import {
-  getRoleIds,
   findDepts,
-  getUserList,
-  getAllRoleList
+  findRoles,
+  findUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  updateUserEnabled,
+  getUserRoleIds,
+  updateUserRoles
 } from "@/api/system";
 import {
   ElForm,
@@ -40,6 +45,8 @@ import {
   reactive,
   onMounted
 } from "vue";
+import { filterNotEmpty } from "@/utils";
+import type { User } from "@/data/entity";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
@@ -47,11 +54,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     deptId: "",
     username: "",
     phone: "",
-    status: ""
+    enabled: null
   });
   const formRef = ref();
   const ruleFormRef = ref();
-  const dataList = ref([]);
+  const dataList: Ref<Array<User>> = ref([]);
   const loading = ref(true);
   // 上传头像信息
   const avatarInfo = ref();
@@ -105,17 +112,18 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     },
     {
       label: "性别",
-      prop: "sex",
+      prop: "gender",
       minWidth: 90,
-      cellRenderer: ({ row, props }) => (
-        <el-tag
-          size={props.size}
-          type={row.sex === 1 ? "danger" : null}
-          effect="plain"
-        >
-          {row.sex === 1 ? "女" : "男"}
-        </el-tag>
-      )
+      cellRenderer: ({ row, props }) =>
+        row.gender != null ? (
+          <el-tag
+            size={props.size}
+            type={row.gender === 2 ? "danger" : null}
+            effect="plain"
+          >
+            {row.gender === 1 ? "男" : "女"}
+          </el-tag>
+        ) : null
     },
     {
       label: "部门",
@@ -130,17 +138,17 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     },
     {
       label: "状态",
-      prop: "status",
+      prop: "enabled",
       minWidth: 90,
       cellRenderer: scope => (
         <el-switch
           size={scope.props.size === "small" ? "small" : "default"}
           loading={switchLoadMap.value[scope.index]?.loading}
-          v-model={scope.row.status}
-          active-value={1}
-          inactive-value={0}
-          active-text="已启用"
-          inactive-text="已停用"
+          v-model={scope.row.enabled}
+          active-value={true}
+          inactive-value={false}
+          active-text="启用"
+          inactive-text="停用"
           inline-prompt
           style={switchStyle.value}
           onChange={() => onChange(scope as any)}
@@ -150,9 +158,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     {
       label: "创建时间",
       minWidth: 90,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      prop: "createdTime",
+      formatter: ({ createdTime }) =>
+        dayjs(createdTime).format("YYYY-MM-DD HH:mm:ss")
     },
     {
       label: "操作",
@@ -188,10 +196,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   function onChange({ row, index }) {
     ElMessageBox.confirm(
       `确认要<strong>${
-        row.status === 0 ? "停用" : "启用"
-      }</strong><strong style='color:var(--el-color-primary)'>${
+        row.enabled ? "启用" : "停用"
+      }</strong>用户<strong style='color:var(--el-color-primary)'>${
         row.username
-      }</strong>用户吗?`,
+      }</strong>吗?`,
       "系统提示",
       {
         confirmButtonText: "确定",
@@ -209,7 +217,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(() => {
+        setTimeout(async () => {
+          const data = {
+            enabled: row.enabled
+          };
+          await updateUserEnabled(row.id, data);
           switchLoadMap.value[index] = Object.assign(
             {},
             switchLoadMap.value[index],
@@ -217,13 +229,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
               loading: false
             }
           );
-          message("已成功修改用户状态", {
+          message(`已${row.enabled ? "启用" : "停用"}`, {
             type: "success"
           });
         }, 300);
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
+        row.enabled = !row.enabled;
       });
   }
 
@@ -231,8 +243,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     console.log(row);
   }
 
-  function handleDelete(row) {
-    message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
+  async function handleDelete(id: number) {
+    await deleteUser(id);
+    message("删除成功", { type: "success" });
     onSearch();
   }
 
@@ -272,11 +285,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { data } = await getUserList(toRaw(form));
-    dataList.value = data.list;
-    pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
+    const { content, page } = await findUsers(filterNotEmpty(toRaw(form)));
+    dataList.value = content;
+    pagination.pageSize = page.size;
+    pagination.currentPage = page.number + 1;
+    pagination.total = page.totalElements;
 
     setTimeout(() => {
       loading.value = false;
@@ -297,11 +310,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function formatHigherDeptOptions(treeList) {
-    // 根据返回数据的status字段值判断追加是否禁用disabled字段，返回处理后的树结构，用于上级部门级联选择器的展示（实际开发中也是如此，不可能前端需要的每个字段后端都会返回，这时需要前端自行根据后端返回的某些字段做逻辑处理）
+    // 根据返回数据的 enabled 字段值判断追加是否禁用 disabled 字段，返回处理后的树结构，用于上级部门级联选择器的展示
     if (!treeList || !treeList.length) return;
     const newTreeList = [];
     for (let i = 0; i < treeList.length; i++) {
-      treeList[i].disabled = treeList[i].status === 0 ? true : false;
+      treeList[i].disabled = !treeList[i].enabled;
       formatHigherDeptOptions(treeList[i].children);
       newTreeList.push(treeList[i]);
     }
@@ -309,21 +322,21 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function openDialog(title = "新增", row?: FormItemProps) {
+    debugger;
     addDialog({
       title: `${title}用户`,
       props: {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          parentId: row?.dept.id ?? 0,
-          nickname: row?.nickname ?? "",
           username: row?.username ?? "",
+          nickname: row?.nickname ?? "",
+          gender: row?.gender ?? null,
+          deptId: row?.dept?.id ?? null,
+          phone: row?.phone ?? null,
+          email: row?.email ?? null,
           password: row?.password ?? "",
-          phone: row?.phone ?? "",
-          email: row?.email ?? "",
-          sex: row?.sex ?? "",
-          status: row?.status ?? 1,
-          remark: row?.remark ?? ""
+          enabled: row?.enabled ?? true
         }
       },
       width: "46%",
@@ -336,21 +349,29 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
         function chores() {
-          message(`您${title}了用户名称为${curData.username}的这条数据`, {
+          message(`${title}成功`, {
             type: "success"
           });
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
-            // 表单规则校验通过
+            const userModel = {
+              username: curData.username,
+              nickname: curData.nickname,
+              gender: curData.gender,
+              deptId: curData.deptId,
+              phone: curData.phone,
+              email: curData.email,
+              password: curData.password,
+              enabled: curData.enabled
+            };
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
+              await createUser(userModel);
               chores();
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
+              await updateUser(row.id, userModel);
               chores();
             }
           }
@@ -466,7 +487,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 分配角色 */
   async function handleRole(row) {
     // 选中的角色列表
-    const ids = (await getRoleIds({ userId: row.id })).data ?? [];
+    const ids = await getUserRoleIds(row.id);
     addDialog({
       title: `分配 ${row.username} 用户的角色`,
       props: {
@@ -483,10 +504,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       fullscreenIcon: true,
       closeOnClickModal: false,
       contentRenderer: () => h(roleForm),
-      beforeSure: (done, { options }) => {
+      beforeSure: async (done, { options }) => {
         const curData = options.props.formInline as RoleFormItemProps;
-        console.log("curIds", curData.ids);
-        // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
+        await updateUserRoles(row.id, curData.ids);
+        message("分配成功", {
+          type: "success"
+        });
         done(); // 关闭弹框
       }
     });
@@ -503,7 +526,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     treeLoading.value = false;
 
     // 角色列表
-    roleOptions.value = (await getAllRoleList()).data;
+    const params = {
+      size: 200
+    };
+    roleOptions.value = (await findRoles(params)).content;
   });
 
   return {

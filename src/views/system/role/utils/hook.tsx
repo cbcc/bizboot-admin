@@ -144,7 +144,7 @@ export function useRole(treeRef: Ref) {
         }, 300);
       })
       .catch(() => {
-        row.enabled ? (row.enabled = false) : (row.enabled = true);
+        row.enabled = !row.enabled;
       });
   }
 

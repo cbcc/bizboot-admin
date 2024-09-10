@@ -9,10 +9,10 @@ export const formRules = reactive(<FormRules>{
   password: [{ required: true, message: "用户密码为必填项", trigger: "blur" }],
   phone: [
     {
+      required: true,
+      message: "手机号为必填项",
       validator: (rule, value, callback) => {
-        if (value === "") {
-          callback();
-        } else if (!isPhone(value)) {
+        if (value === "" || !isPhone(value)) {
           callback(new Error("请输入正确的手机号码格式"));
         } else {
           callback();
@@ -25,7 +25,7 @@ export const formRules = reactive(<FormRules>{
   email: [
     {
       validator: (rule, value, callback) => {
-        if (value === "") {
+        if (value === null || value === "") {
           callback();
         } else if (!isEmail(value)) {
           callback(new Error("请输入正确的邮箱格式"));
@@ -33,7 +33,8 @@ export const formRules = reactive(<FormRules>{
           callback();
         }
       },
-      trigger: "blur"
+      trigger: "change"
     }
-  ]
+  ],
+  deptId: [{ required: true, message: "归属部门为必填项", trigger: "change" }]
 });

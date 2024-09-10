@@ -1,44 +1,56 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-import type { Dept, PageResult, Role } from "@/data/entity";
+import type { User, Dept, Role, PageResult } from "@/data/entity";
 
 type Result = {
   success: boolean;
   data?: Array<any>;
 };
 
-type ResultTable = {
-  success: boolean;
-  data?: {
-    /** 列表数据 */
-    list: Array<any>;
-    /** 总条目数 */
-    total?: number;
-    /** 每页显示条目个数 */
-    pageSize?: number;
-    /** 当前页数 */
-    currentPage?: number;
-  };
-};
-
-/** 获取系统管理-用户管理列表 */
-export const getUserList = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("/user"), { data });
-};
-
-/** 系统管理-用户管理-获取所有角色列表 */
-export const getAllRoleList = () => {
-  return http.request<Result>("get", baseUrlApi("/all"));
-};
-
-/** 系统管理-用户管理-根据userId，获取对应角色id列表（userId：用户id） */
-export const getRoleIds = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/list-role-ids"), { data });
-};
-
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/menu"), { data });
+};
+
+/** 用户-分页查询 */
+export const findUsers = (params?: object) => {
+  return http.request<PageResult<User>>("get", baseUrlApi("/users"), {
+    params
+  });
+};
+
+/** 用户-新增 */
+export const createUser = (data?: object) => {
+  return http.request<User>("post", baseUrlApi("/users"), { data });
+};
+
+/** 用户-修改 */
+export const updateUser = (id: number, data?: object) => {
+  return http.request<null>("put", baseUrlApi(`/users/${id}`), { data });
+};
+
+/** 用户-修改状态 */
+export const updateUserEnabled = (id: number, data?: object) => {
+  return http.request<null>("patch", baseUrlApi(`/users/${id}/enabled`), {
+    data
+  });
+};
+
+/** 用户-查询用户角色 id 列表 */
+export const getUserRoleIds = (id: number) => {
+  return http.request<Array<number>>("get", baseUrlApi(`/users/${id}/roles`));
+};
+
+/** 用户-修改用户角色 */
+export const updateUserRoles = (id: number, data?: object) => {
+  return http.request<null>("patch", baseUrlApi(`/users/${id}/roles`), {
+    data
+  });
+};
+
+/** 用户-删除 */
+export const deleteUser = (id: number) => {
+  return http.request<null>("delete", baseUrlApi(`/users/${id}`));
 };
 
 /** 部门-分页查询 */

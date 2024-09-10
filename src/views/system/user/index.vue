@@ -84,15 +84,15 @@ const {
             class="!w-[180px]"
           />
         </el-form-item>
-        <el-form-item label="状态：" prop="status">
+        <el-form-item label="状态：" prop="enabled">
           <el-select
-            v-model="form.status"
+            v-model="form.enabled"
             placeholder="请选择"
             clearable
             class="!w-[180px]"
           >
-            <el-option label="已开启" value="1" />
-            <el-option label="已关闭" value="0" />
+            <el-option label="启用" :value="true" />
+            <el-option label="停用" :value="false" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -110,11 +110,7 @@ const {
         </el-form-item>
       </el-form>
 
-      <PureTableBar
-        title="用户管理（仅演示，操作后不生效）"
-        :columns="columns"
-        @refresh="onSearch"
-      >
+      <PureTableBar title="用户管理" :columns="columns" @refresh="onSearch">
         <template #buttons>
           <el-button
             type="primary"
@@ -181,8 +177,8 @@ const {
                 修改
               </el-button>
               <el-popconfirm
-                :title="`是否确认删除用户编号为${row.id}的这条数据`"
-                @confirm="handleDelete(row)"
+                :title="`确认删除用户${row.username}吗`"
+                @confirm="handleDelete(row.id)"
               >
                 <template #reference>
                   <el-button
