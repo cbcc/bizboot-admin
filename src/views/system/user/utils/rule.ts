@@ -10,9 +10,10 @@ export const formRules = reactive(<FormRules>{
   phone: [
     {
       required: true,
-      message: "手机号为必填项",
       validator: (rule, value, callback) => {
-        if (value === "" || !isPhone(value)) {
+        if (!value) {
+          callback(new Error("手机号为必填项"));
+        } else if (!isPhone(value)) {
           callback(new Error("请输入正确的手机号码格式"));
         } else {
           callback();

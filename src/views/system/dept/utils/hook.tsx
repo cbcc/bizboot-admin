@@ -79,7 +79,6 @@ export function useDept() {
     let newData = content;
     const a = dayjs("2024-09-08T17:27:07").format("YYYY-MM-DD HH:mm:ss");
     console.log(a);
-    debugger;
     dataList.value = handleTree(newData); // 处理成树结构
     setTimeout(() => {
       loading.value = false;

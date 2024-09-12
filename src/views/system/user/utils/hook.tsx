@@ -322,7 +322,6 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function openDialog(title = "新增", row?: FormItemProps) {
-    debugger;
     addDialog({
       title: `${title}用户`,
       props: {
