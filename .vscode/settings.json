@@ -44,6 +44,7 @@
     "cascader",
     "depts",
     "iconify",
+    "pinia",
     "popconfirm",
     "pureadmin"
   ]

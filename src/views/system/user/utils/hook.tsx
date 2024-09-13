@@ -363,7 +363,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
               deptId: curData.deptId,
               phone: curData.phone,
               email: curData.email,
-              password: curData.password,
+              password: btoa(curData.password), // base64
               enabled: curData.enabled
             };
             if (title === "新增") {

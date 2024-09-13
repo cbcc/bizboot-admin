@@ -77,8 +77,6 @@ export function useDept() {
     loading.value = true;
     const { content } = await findDepts(filterNotEmpty(toRaw(form))); // 这里是返回一维数组结构，前端自行处理成树结构
     let newData = content;
-    const a = dayjs("2024-09-08T17:27:07").format("YYYY-MM-DD HH:mm:ss");
-    console.log(a);
     dataList.value = handleTree(newData); // 处理成树结构
     setTimeout(() => {
       loading.value = false;

@@ -8,6 +8,25 @@ export default defineFakeRoute([
     response: ({ body }) => {
       if (body.username === "admin") {
         return {
+          accessToken: "eyJhbGciOiJIUzUxMiJ9.admin",
+          refreshToken: "eyJhbGciOiJIUzUxMiJ9.adminRefresh",
+          expires: "2030/10/30 00:00:00"
+        };
+      } else {
+        return {
+          accessToken: "eyJhbGciOiJIUzUxMiJ9.common",
+          refreshToken: "eyJhbGciOiJIUzUxMiJ9.commonRefresh",
+          expires: "2030/10/30 00:00:00"
+        };
+      }
+    }
+  },
+  {
+    url: "/api/v1/login",
+    method: "post",
+    response: ({ body }) => {
+      if (body.username === "admin") {
+        return {
           success: true,
           data: {
             avatar: "https://avatars.githubusercontent.com/u/44761321",
