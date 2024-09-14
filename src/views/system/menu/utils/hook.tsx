@@ -1,12 +1,14 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getMenuList } from "@/api/system";
+import { findMenus, createMenu, updateMenu, deleteMenu } from "@/api/system";
 import { addDialog } from "@/components/ReDialog";
-import { reactive, ref, onMounted, h } from "vue";
+import { reactive, ref, onMounted, h, toRaw } from "vue";
 import type { FormItemProps } from "../utils/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+import { filterNotEmpty } from "@/utils";
+import type { Menu } from "@/data/entity";
 
 export function useMenu() {
   const form = reactive({
@@ -43,20 +45,21 @@ export function useMenu() {
             })}
           </span>
           <span>{row.title}</span>
+          <span class="inline-block mr-1">
+            {h(useRenderIcon(row.extraIcon), {
+              style: { paddingTop: "1px" }
+            })}
+          </span>
         </>
       )
     },
     {
       label: "菜单类型",
-      prop: "menuType",
+      prop: "type",
       width: 100,
       cellRenderer: ({ row, props }) => (
-        <el-tag
-          size={props.size}
-          type={getMenuType(row.menuType)}
-          effect="plain"
-        >
-          {getMenuType(row.menuType, true)}
+        <el-tag size={props.size} type={getMenuType(row.type)} effect="plain">
+          {getMenuType(row.type, true)}
         </el-tag>
       )
     },
@@ -76,7 +79,7 @@ export function useMenu() {
     },
     {
       label: "排序",
-      prop: "rank",
+      prop: "sort",
       width: 100
     },
     {
@@ -105,12 +108,8 @@ export function useMenu() {
 
   async function onSearch() {
     loading.value = true;
-    const { data } = await getMenuList(); // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
+    const data = await findMenus(filterNotEmpty(toRaw(form))); // 这里是返回一维数组结构，前端自行处理成树结构
     let newData = data;
-    if (!isAllEmpty(form.title)) {
-      // 前端搜索菜单名称
-      newData = newData.filter(item => item.title.includes(form.title));
-    }
     dataList.value = handleTree(newData); // 处理成树结构
     setTimeout(() => {
       loading.value = false;
@@ -128,19 +127,19 @@ export function useMenu() {
     return newTreeList;
   }
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", row?: Menu) {
     addDialog({
       title: `${title}菜单`,
       props: {
         formInline: {
-          menuType: row?.menuType ?? 0,
+          type: row?.type ?? 0,
           higherMenuOptions: formatHigherMenuOptions(cloneDeep(dataList.value)),
           parentId: row?.parentId ?? 0,
           title: row?.title ?? "",
           name: row?.name ?? "",
           path: row?.path ?? "",
           component: row?.component ?? "",
-          rank: row?.rank ?? 99,
+          sort: row?.sort ?? 99,
           redirect: row?.redirect ?? "",
           icon: row?.icon ?? "",
           extraIcon: row?.extraIcon ?? "",
@@ -155,7 +154,7 @@ export function useMenu() {
           fixedTag: row?.fixedTag ?? false,
           showLink: row?.showLink ?? true,
           showParent: row?.showParent ?? false
-        }
+        } as FormItemProps
       },
       width: "45%",
       draggable: true,
@@ -167,21 +166,43 @@ export function useMenu() {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
         function chores() {
-          message(`您${title}了菜单名称为${curData.title}的这条数据`, {
+          message(`${title}成功`, {
             type: "success"
           });
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
             // 表单规则校验通过
+            const menuModel = {
+              type: curData.type,
+              parentId: curData.parentId,
+              title: curData.title,
+              name: curData.name,
+              path: curData.path,
+              component: curData.component,
+              icon: curData.icon,
+              extraIcon: curData.extraIcon,
+              enterTransition: curData.enterTransition,
+              leaveTransition: curData.leaveTransition,
+              activePath: curData.activePath,
+              redirect: curData.redirect,
+              auths: curData.auths,
+              frameSrc: curData.frameSrc,
+              frameLoading: curData.frameLoading,
+              keepAlive: curData.keepAlive,
+              hiddenTag: curData.hiddenTag,
+              fixedTag: curData.fixedTag,
+              showLink: curData.showLink,
+              showParent: curData.showParent,
+              sort: curData.sort
+            };
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
+              await createMenu(menuModel);
               chores();
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
+              await updateMenu(row.id, menuModel);
               chores();
             }
           }
@@ -190,10 +211,9 @@ export function useMenu() {
     });
   }
 
-  function handleDelete(row) {
-    message(`您删除了菜单名称为${row.title}的这条数据`, {
-      type: "success"
-    });
+  async function handleDelete(id: number) {
+    await deleteMenu(id);
+    message("删除成功", { type: "success" });
     onSearch();
   }
 

@@ -1,15 +1,10 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-import type { User, Dept, Role, PageResult } from "@/data/entity";
+import type { User, Dept, Role, Menu, PageResult } from "@/data/entity";
 
 type Result = {
   success: boolean;
   data?: Array<any>;
-};
-
-/** 获取系统管理-菜单管理列表 */
-export const getMenuList = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/menu"), { data });
 };
 
 /** 用户-分页查询 */
@@ -102,6 +97,26 @@ export const updateRoleEnabled = (id: number, data?: object) => {
 /** 角色-删除 */
 export const deleteRole = (id: number) => {
   return http.request<null>("delete", baseUrlApi(`/roles/${id}`));
+};
+
+/** 菜单-列表查询 */
+export const findMenus = (params?: object) => {
+  return http.request<Array<Menu>>("get", baseUrlApi("/menus"), { params });
+};
+
+/** 菜单-新增 */
+export const createMenu = (data?: object) => {
+  return http.request<Menu>("post", baseUrlApi("/menus"), { data });
+};
+
+/** 菜单-修改 */
+export const updateMenu = (id: number, data?: object) => {
+  return http.request<null>("put", baseUrlApi(`/menus/${id}`), { data });
+};
+
+/** 菜单-删除 */
+export const deleteMenu = (id: number) => {
+  return http.request<null>("delete", baseUrlApi(`/menus/${id}`));
 };
 
 /** 获取角色管理-权限-菜单权限 */

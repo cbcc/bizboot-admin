@@ -35,6 +35,33 @@ export type Role = BaseData & {
   remark?: string;
 };
 
+/**
+ * 菜单
+ */
+export type Menu = BaseData & {
+  type: number;
+  parentId: number;
+  title: string;
+  name: string;
+  path: string;
+  component: string;
+  icon: string;
+  extraIcon: string;
+  enterTransition: string;
+  leaveTransition: string;
+  activePath: string;
+  redirect: string;
+  auths: string;
+  frameSrc: string;
+  frameLoading: boolean;
+  keepAlive: boolean;
+  hiddenTag: boolean;
+  fixedTag: boolean;
+  showLink: boolean;
+  showParent: boolean;
+  sort: number;
+};
+
 export type PageResult<T> = {
   content: Array<T>;
   page: Page;

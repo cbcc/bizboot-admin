@@ -60,7 +60,7 @@ const {
     </el-form>
 
     <PureTableBar
-      title="菜单管理（仅演示，操作后不生效）"
+      title="菜单管理"
       :columns="columns"
       :isExpandAll="false"
       :tableRef="tableRef?.getTableRef()"
@@ -106,7 +106,7 @@ const {
               修改
             </el-button>
             <el-button
-              v-show="row.menuType !== 3"
+              v-show="row.type !== 4"
               class="reset-margin"
               link
               type="primary"
@@ -117,8 +117,8 @@ const {
               新增
             </el-button>
             <el-popconfirm
-              :title="`是否确认删除菜单名称为${row.title}的这条数据${row?.children?.length > 0 ? '。注意下级菜单也会一并删除，请谨慎操作' : ''}`"
-              @confirm="handleDelete(row)"
+              :title="`确认删除${row.title}吗${row?.children?.length > 0 ? '？注意下级菜单也会一并删除，请谨慎操作' : ''}`"
+              @confirm="handleDelete(row.id)"
             >
               <template #reference>
                 <el-button
