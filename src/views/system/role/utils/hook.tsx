@@ -12,10 +12,11 @@ import {
   createRole,
   deleteRole,
   findRoles,
-  getRoleMenu,
+  findMenus,
   getRoleMenuIds,
   updateRole,
-  updateRoleEnabled
+  updateRoleEnabled,
+  updateRoleMenus
 } from "@/api/system";
 import { h, onMounted, reactive, type Ref, ref, toRaw, watch } from "vue";
 import type { Role } from "@/data/entity";
@@ -230,12 +231,12 @@ export function useRole(treeRef: Ref) {
   }
 
   /** 菜单权限 */
-  async function handleMenu(row?: any) {
+  async function handleMenu(row?: Role) {
     const { id } = row;
     if (id) {
       curRow.value = row;
       isShow.value = true;
-      const { data } = await getRoleMenuIds({ id });
+      const data = await getRoleMenuIds(id);
       treeRef.value.setCheckedKeys(data);
     } else {
       curRow.value = null;
@@ -252,11 +253,11 @@ export function useRole(treeRef: Ref) {
   }
 
   /** 菜单权限-保存 */
-  function handleSave() {
-    const { id, name } = curRow.value;
+  async function handleSave() {
+    const id = curRow.value.id;
     // 根据用户 id 调用实际项目中菜单权限修改接口
-    console.log(id, treeRef.value.getCheckedKeys());
-    message(`角色名称为${name}的菜单权限修改成功`, {
+    await updateRoleMenus(id, treeRef.value.getCheckedKeys());
+    message("菜单权限修改成功", {
       type: "success"
     });
   }
@@ -274,7 +275,7 @@ export function useRole(treeRef: Ref) {
 
   onMounted(async () => {
     onSearch();
-    const { data } = await getRoleMenu();
+    const data = await findMenus();
     treeIds.value = getKeyList(data, "id");
     treeData.value = handleTree(data);
   });
@@ -306,7 +307,6 @@ export function useRole(treeRef: Ref) {
     isExpandAll,
     isSelectAll,
     treeSearchValue,
-    // buttonClass,
     onSearch,
     resetForm,
     openDialog,
@@ -315,7 +315,6 @@ export function useRole(treeRef: Ref) {
     handleDelete,
     filterMethod,
     onQueryChanged,
-    // handleDatabase,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange

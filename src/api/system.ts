@@ -2,11 +2,6 @@ import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
 import type { User, Dept, Role, Menu, PageResult } from "@/data/entity";
 
-type Result = {
-  success: boolean;
-  data?: Array<any>;
-};
-
 /** 用户-分页查询 */
 export const findUsers = (params?: object) => {
   return http.request<PageResult<User>>("get", baseUrlApi("/users"), {
@@ -99,6 +94,18 @@ export const deleteRole = (id: number) => {
   return http.request<null>("delete", baseUrlApi(`/roles/${id}`));
 };
 
+/** 角色-查询角色菜单 id 列表 */
+export const getRoleMenuIds = (id: number) => {
+  return http.request<Array<number>>("get", baseUrlApi(`/roles/${id}/menus`));
+};
+
+/** 角色-修改角色菜单 */
+export const updateRoleMenus = (id: number, data?: object) => {
+  return http.request<null>("patch", baseUrlApi(`/roles/${id}/menus`), {
+    data
+  });
+};
+
 /** 菜单-列表查询 */
 export const findMenus = (params?: object) => {
   return http.request<Array<Menu>>("get", baseUrlApi("/menus"), { params });
@@ -117,14 +124,4 @@ export const updateMenu = (id: number, data?: object) => {
 /** 菜单-删除 */
 export const deleteMenu = (id: number) => {
   return http.request<null>("delete", baseUrlApi(`/menus/${id}`));
-};
-
-/** 获取角色管理-权限-菜单权限 */
-export const getRoleMenu = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/role-menu"), { data });
-};
-
-/** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
-export const getRoleMenuIds = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/role-menu-ids"), { data });
 };
