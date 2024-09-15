@@ -2,39 +2,91 @@
 import { defineFakeRoute } from "vite-plugin-fake-server/client";
 
 /**
- * roles：页面级别权限，这里模拟二种 "admin"、"common"
- * admin：管理员角色
- * common：普通角色
+ * 模拟 admin 角色
  */
 const permissionRouter = {
+  name: "Permission",
   path: "/permission",
+  component: "",
   meta: {
     title: "权限管理",
     icon: "ep:lollipop",
+    extraIcon: "",
+    enterTransition: "",
+    leaveTransition: "",
+    activePath: "",
+    redirect: "",
+    frameSrc: "",
+    frameLoading: false,
+    keepAlive: false,
+    hiddenTag: false,
+    fixedTag: false,
+    showLink: true,
+    showParent: false,
     rank: 10
   },
   children: [
     {
-      path: "/permission/page/index",
       name: "PermissionPage",
+      path: "/permission/page/index",
+      component: "",
       meta: {
         title: "页面权限",
-        roles: ["admin", "common"]
+        icon: "",
+        extraIcon: "",
+        enterTransition: "",
+        leaveTransition: "",
+        activePath: "",
+        redirect: "",
+        frameSrc: "",
+        frameLoading: false,
+        keepAlive: false,
+        hiddenTag: false,
+        fixedTag: false,
+        showLink: true,
+        showParent: false
       }
     },
     {
+      name: "PermissionButtonRouter",
       path: "/permission/button",
+      component: "",
       meta: {
         title: "按钮权限",
-        roles: ["admin", "common"]
+        icon: "",
+        extraIcon: "",
+        enterTransition: "",
+        leaveTransition: "",
+        activePath: "",
+        redirect: "",
+        frameSrc: "",
+        frameLoading: false,
+        keepAlive: false,
+        hiddenTag: false,
+        fixedTag: false,
+        showLink: true,
+        showParent: false
       },
       children: [
         {
+          name: "PermissionButtonRouter",
           path: "/permission/button/router",
           component: "permission/button/index",
-          name: "PermissionButtonRouter",
           meta: {
             title: "路由返回按钮权限",
+            icon: "",
+            extraIcon: "",
+            enterTransition: "",
+            leaveTransition: "",
+            activePath: "",
+            redirect: "",
+            frameSrc: "",
+            frameLoading: false,
+            keepAlive: false,
+            hiddenTag: false,
+            fixedTag: false,
+            showLink: true,
+            showParent: false,
             auths: [
               "permission:btn:add",
               "permission:btn:edit",
@@ -43,11 +95,24 @@ const permissionRouter = {
           }
         },
         {
+          name: "PermissionButtonLogin",
           path: "/permission/button/login",
           component: "permission/button/perms",
-          name: "PermissionButtonLogin",
           meta: {
-            title: "登录接口返回按钮权限"
+            title: "登录接口返回按钮权限",
+            icon: "",
+            extraIcon: "",
+            enterTransition: "",
+            leaveTransition: "",
+            activePath: "",
+            redirect: "",
+            frameSrc: "",
+            frameLoading: false,
+            keepAlive: false,
+            hiddenTag: false,
+            fixedTag: false,
+            showLink: true,
+            showParent: false
           }
         }
       ]
@@ -57,13 +122,10 @@ const permissionRouter = {
 
 export default defineFakeRoute([
   {
-    url: "/api/get-async-routes",
+    url: "/api/routes/user",
     method: "get",
     response: () => {
-      return {
-        success: true,
-        data: [permissionRouter]
-      };
+      return [permissionRouter];
     }
   }
 ]);

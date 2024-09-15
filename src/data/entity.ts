@@ -62,6 +62,34 @@ export type Menu = BaseData & {
   sort: number;
 };
 
+/**
+ * 路由
+ */
+export type Route = {
+  name: string;
+  path: string;
+  component: string;
+  meta: {
+    title: string;
+    icon: string;
+    extraIcon: string;
+    enterTransition: string;
+    leaveTransition: string;
+    activePath: string;
+    redirect: string;
+    frameSrc: string;
+    frameLoading: boolean;
+    keepAlive: boolean;
+    hiddenTag: boolean;
+    fixedTag: boolean;
+    showLink: boolean;
+    showParent: boolean;
+    rank: number;
+    auths: string[];
+  };
+  children: Route[];
+};
+
 export type PageResult<T> = {
   content: Array<T>;
   page: Page;
