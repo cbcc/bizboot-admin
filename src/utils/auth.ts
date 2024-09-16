@@ -15,6 +15,14 @@ export interface DataInfo<T> {
   username?: string;
   /** 昵称 */
   nickname?: string;
+  // 性别
+  gender?: number;
+  // 手机号
+  phone?: string;
+  // 邮箱
+  email?: string;
+  // 部门名称
+  deptName?: string;
   /** 当前登录用户的角色 */
   roles?: Array<string>;
   /** 当前登录用户的按钮级别权限 */
@@ -68,30 +76,17 @@ export function setToken(data: DataInfo<Date>) {
       : {}
   );
 
-  function setUserKey({ avatar, username, nickname, roles, permissions }) {
-    useUserStoreHook().SET_AVATAR(avatar);
-    useUserStoreHook().SET_USERNAME(username);
-    useUserStoreHook().SET_NICKNAME(nickname);
-    useUserStoreHook().SET_ROLES(roles);
-    useUserStoreHook().SET_PERMS(permissions);
-    storageLocal().setItem(userKey, {
-      refreshToken,
-      expires,
-      avatar,
-      username,
-      nickname,
-      roles,
-      permissions
-    });
-  }
-
-  if (data.username && data.roles) {
-    const { username, roles } = data;
+  const username = data.username;
+  if (username) {
     setUserKey({
       avatar: data?.avatar ?? "",
       username,
       nickname: data?.nickname ?? "",
-      roles,
+      gender: data?.gender,
+      phone: data?.phone ?? "",
+      email: data?.email ?? "",
+      deptName: data?.deptName ?? "",
+      roles: data?.roles ?? [],
       permissions: data?.permissions ?? []
     });
   } else {
@@ -101,6 +96,13 @@ export function setToken(data: DataInfo<Date>) {
       storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "";
     const nickname =
       storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "";
+    const gender = storageLocal().getItem<DataInfo<number>>(userKey)?.gender;
+    const phone =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.phone ?? "";
+    const email =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.email ?? "";
+    const deptName =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.deptName ?? "";
     const roles =
       storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
     const permissions =
@@ -109,6 +111,45 @@ export function setToken(data: DataInfo<Date>) {
       avatar,
       username,
       nickname,
+      gender,
+      phone,
+      email,
+      deptName,
+      roles,
+      permissions
+    });
+  }
+
+  function setUserKey({
+    avatar,
+    username,
+    nickname,
+    gender,
+    phone,
+    email,
+    deptName,
+    roles,
+    permissions
+  }) {
+    useUserStoreHook().SET_AVATAR(avatar);
+    useUserStoreHook().SET_USERNAME(username);
+    useUserStoreHook().SET_NICKNAME(nickname);
+    useUserStoreHook().SET_GENDER(gender);
+    useUserStoreHook().SET_PHONE(phone);
+    useUserStoreHook().SET_EMAIL(email);
+    useUserStoreHook().SET_DEPT_NAME(deptName);
+    useUserStoreHook().SET_ROLES(roles);
+    useUserStoreHook().SET_PERMS(permissions);
+    storageLocal().setItem(userKey, {
+      refreshToken,
+      expires,
+      avatar,
+      username,
+      nickname,
+      gender,
+      phone,
+      email,
+      deptName,
       roles,
       permissions
     });

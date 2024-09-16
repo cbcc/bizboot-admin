@@ -2,7 +2,6 @@
  * 用户
  */
 export type User = BaseData & {
-  uid: string;
   username: string;
   nickname?: string;
   gender?: number;
@@ -88,6 +87,34 @@ export type Route = {
     auths: string[];
   };
   children: Route[];
+};
+
+export type LoginResult = {
+  /** `token` */
+  accessToken: string;
+  /** 用于调用刷新`accessToken`的接口时所需的`token` */
+  refreshToken: string;
+  /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
+  expires: Date;
+  /** 用户信息 */
+  avatar: string;
+  username: string;
+  nickname: string;
+  gender: number;
+  phone: string;
+  email: string;
+  deptName: string;
+  roles: string[];
+  permissions: string[];
+};
+
+export type RefreshResult = {
+  /** `token` */
+  accessToken: string;
+  /** 用于调用刷新`accessToken`的接口时所需的`token` */
+  refreshToken: string;
+  /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
+  expires: Date;
 };
 
 export type PageResult<T> = {

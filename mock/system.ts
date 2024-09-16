@@ -11,7 +11,6 @@ export default defineFakeRoute([
         content: [
           {
             id: 1,
-            uid: "0001",
             username: "孙悟空",
             nickname: "猴子",
             gender: 1,
@@ -27,7 +26,6 @@ export default defineFakeRoute([
           },
           {
             id: 2,
-            uid: "7e7898a010ea4b17bc3143553c8694c5",
             username: "猪悟能",
             nickname: "八戒",
             gender: 1,
