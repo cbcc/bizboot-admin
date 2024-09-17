@@ -156,11 +156,13 @@ export function useRole(treeRef: Ref) {
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   function handleSelectionChange(val) {
@@ -169,15 +171,19 @@ export function useRole(treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { content, page } = await findRoles(filterNotEmpty(toRaw(form)));
+
+    const params = {
+      ...filterNotEmpty(toRaw(form)),
+      size: pagination.pageSize,
+      page: pagination.currentPage - 1
+    };
+    const { content, page } = await findRoles(params);
     dataList.value = content;
     pagination.pageSize = page.size;
     pagination.currentPage = page.number + 1;
     pagination.total = page.totalElements;
 
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    loading.value = false;
   }
 
   const resetForm = formEl => {
