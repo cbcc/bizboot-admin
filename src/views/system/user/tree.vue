@@ -188,9 +188,9 @@ defineExpose({ onTreeReset });
         >
           <IconifyIconOffline
             :icon="
-              data.type === 1
+              data.type === 0
                 ? OfficeBuilding
-                : data.type === 2
+                : data.type === 1
                   ? LocationCompany
                   : Dept
             "

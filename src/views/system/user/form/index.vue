@@ -22,11 +22,11 @@ const props = withDefaults(defineProps<FormProps>(), {
 
 const genderOptions = [
   {
-    value: 1,
+    value: 0,
     label: "男"
   },
   {
-    value: 2,
+    value: 1,
     label: "女"
   }
 ];
@@ -50,20 +50,23 @@ defineExpose({ getRef });
   >
     <el-row :gutter="30">
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户昵称" prop="nickname">
+        <el-form-item label="用户名" prop="username">
           <el-input
-            v-model="newFormInline.nickname"
+            v-model="newFormInline.username"
             clearable
-            placeholder="请输入用户昵称"
+            placeholder="请输入用户名"
+            maxlength="16"
+            :disabled="formInline.title === '修改'"
           />
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户名称" prop="username">
+        <el-form-item label="昵称" prop="nickname">
           <el-input
-            v-model="newFormInline.username"
+            v-model="newFormInline.nickname"
             clearable
-            placeholder="请输入用户名称"
+            placeholder="请输入昵称"
+            maxlength="16"
           />
         </el-form-item>
       </re-col>
@@ -74,11 +77,13 @@ defineExpose({ getRef });
         :xs="24"
         :sm="24"
       >
-        <el-form-item label="用户密码" prop="password">
+        <el-form-item label="密码" prop="password">
           <el-input
             v-model="newFormInline.password"
             clearable
-            placeholder="请输入用户密码"
+            placeholder="请输入密码"
+            show-password
+            maxlength="30"
           />
         </el-form-item>
       </re-col>
@@ -88,6 +93,7 @@ defineExpose({ getRef });
             v-model="newFormInline.phone"
             clearable
             placeholder="请输入手机号"
+            maxlength="11"
           />
         </el-form-item>
       </re-col>
@@ -98,14 +104,15 @@ defineExpose({ getRef });
             v-model="newFormInline.email"
             clearable
             placeholder="请输入邮箱"
+            maxlength="60"
           />
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户性别">
+        <el-form-item label="性别">
           <el-select
             v-model="newFormInline.gender"
-            placeholder="请选择用户性别"
+            placeholder="请选择性别"
             class="w-full"
             clearable
           >
@@ -143,7 +150,7 @@ defineExpose({ getRef });
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户状态">
+        <el-form-item label="状态">
           <el-switch
             v-model="newFormInline.enabled"
             inline-prompt

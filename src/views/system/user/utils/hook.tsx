@@ -82,12 +82,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       reserveSelection: true // 数据刷新后保留选项
     },
     {
-      label: "用户编号",
+      label: "编号",
       prop: "id",
       width: 90
     },
     {
-      label: "用户头像",
+      label: "头像",
       prop: "avatar",
       cellRenderer: ({ row }) => (
         <el-image
@@ -101,12 +101,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       width: 90
     },
     {
-      label: "用户名称",
+      label: "用户名",
       prop: "username",
       minWidth: 130
     },
     {
-      label: "用户昵称",
+      label: "昵称",
       prop: "nickname",
       minWidth: 130
     },
@@ -118,10 +118,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         row.gender != null ? (
           <el-tag
             size={props.size}
-            type={row.gender === 2 ? "danger" : null}
+            type={row.gender === 1 ? "danger" : null}
             effect="plain"
           >
-            {row.gender === 1 ? "男" : "女"}
+            {row.gender === 0 ? "男" : "女"}
           </el-tag>
         ) : null
     },
@@ -131,7 +131,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       minWidth: 90
     },
     {
-      label: "手机号码",
+      label: "手机号",
       prop: "phone",
       minWidth: 90,
       formatter: ({ phone }) => hideTextAtIndex(phone, { start: 3, end: 6 })

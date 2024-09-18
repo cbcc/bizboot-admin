@@ -24,15 +24,15 @@ const newFormInline = ref(props.formInline);
 
 const typeOptions = [
   {
-    value: 1,
+    value: 0,
     label: "总公司"
   },
   {
-    value: 2,
+    value: 1,
     label: "分公司"
   },
   {
-    value: 3,
+    value: 2,
     label: "部门"
   }
 ];
@@ -82,6 +82,7 @@ defineExpose({ getRef });
             v-model="newFormInline.name"
             clearable
             placeholder="请输入部门名称"
+            maxlength="30"
           />
         </el-form-item>
       </re-col>
@@ -128,6 +129,8 @@ defineExpose({ getRef });
             v-model="newFormInline.remark"
             placeholder="请输入备注信息"
             type="textarea"
+            maxlength="200"
+            show-word-limit
           />
         </el-form-item>
       </re-col>

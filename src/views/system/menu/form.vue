@@ -97,6 +97,7 @@ defineExpose({ getRef });
             v-model="newFormInline.title"
             clearable
             placeholder="请输入菜单名称"
+            maxlength="16"
           />
         </el-form-item>
       </re-col>
@@ -106,6 +107,7 @@ defineExpose({ getRef });
             v-model="newFormInline.name"
             clearable
             placeholder="请输入路由名称"
+            maxlength="30"
           />
         </el-form-item>
       </re-col>
@@ -116,6 +118,7 @@ defineExpose({ getRef });
             v-model="newFormInline.path"
             clearable
             placeholder="请输入路由路径"
+            maxlength="250"
           />
         </el-form-item>
       </re-col>
@@ -125,6 +128,7 @@ defineExpose({ getRef });
             v-model="newFormInline.component"
             clearable
             placeholder="请输入组件路径"
+            maxlength="250"
           />
         </el-form-item>
       </re-col>
@@ -146,6 +150,7 @@ defineExpose({ getRef });
             v-model="newFormInline.redirect"
             clearable
             placeholder="请输入默认跳转地址"
+            maxlength="250"
           />
         </el-form-item>
       </re-col>
@@ -157,11 +162,6 @@ defineExpose({ getRef });
       </re-col>
       <re-col v-show="newFormInline.type !== 3" :value="12" :xs="24" :sm="24">
         <el-form-item label="右侧图标">
-          <!-- <el-input
-            v-model="newFormInline.extraIcon"
-            clearable
-            placeholder="菜单名称右侧的额外图标"
-          /> -->
           <IconSelect v-model="newFormInline.extraIcon" class="w-full" />
         </el-form-item>
       </re-col>
@@ -189,6 +189,7 @@ defineExpose({ getRef });
             v-model="newFormInline.activePath"
             clearable
             placeholder="请输入需要激活的菜单"
+            maxlength="250"
           />
         </el-form-item>
       </re-col>
@@ -199,6 +200,7 @@ defineExpose({ getRef });
             v-model="newFormInline.auths"
             clearable
             placeholder="请输入权限标识"
+            maxlength="30"
           />
         </el-form-item>
       </re-col>
@@ -210,6 +212,7 @@ defineExpose({ getRef });
             v-model="newFormInline.frameSrc"
             clearable
             placeholder="请输入 iframe 链接地址"
+            maxlength="250"
           />
         </el-form-item>
       </re-col>

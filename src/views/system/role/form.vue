@@ -37,6 +37,7 @@ defineExpose({ getRef });
         v-model="newFormInline.name"
         clearable
         placeholder="请输入角色名称"
+        maxlength="16"
       />
     </el-form-item>
     <el-form-item label="角色标识" prop="code">
@@ -44,6 +45,7 @@ defineExpose({ getRef });
         v-model="newFormInline.code"
         clearable
         placeholder="请输入角色标识"
+        maxlength="16"
       />
     </el-form-item>
     <el-form-item label="状态" prop="enabled">
@@ -62,6 +64,8 @@ defineExpose({ getRef });
         v-model="newFormInline.remark"
         placeholder="请输入备注信息"
         type="textarea"
+        maxlength="50"
+        show-word-limit
       />
     </el-form-item>
   </el-form>
