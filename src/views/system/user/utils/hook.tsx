@@ -209,7 +209,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         draggable: true
       }
     )
-      .then(() => {
+      .then(async () => {
         switchLoadMap.value[index] = Object.assign(
           {},
           switchLoadMap.value[index],
@@ -217,22 +217,20 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(async () => {
-          const data = {
-            enabled: row.enabled
-          };
-          await updateUserEnabled(row.id, data);
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message(`已${row.enabled ? "启用" : "停用"}`, {
-            type: "success"
-          });
-        }, 300);
+        const data = {
+          enabled: row.enabled
+        };
+        await updateUserEnabled(row.id, data);
+        switchLoadMap.value[index] = Object.assign(
+          {},
+          switchLoadMap.value[index],
+          {
+            loading: false
+          }
+        );
+        message(`已${row.enabled ? "启用" : "停用"}`, {
+          type: "success"
+        });
       })
       .catch(() => {
         row.enabled = !row.enabled;
@@ -372,12 +370,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
               password: btoa(curData.password), // base64
               enabled: curData.enabled
             };
-            if (title === "新增") {
-              await createUser(userModel);
+            try {
+              if (title === "新增") {
+                await createUser(userModel);
+              } else {
+                await updateUser(row.id, userModel);
+              }
               chores();
-            } else {
-              await updateUser(row.id, userModel);
-              chores();
+            } catch (error) {
+              message(error.message, { type: "error" });
             }
           }
         });

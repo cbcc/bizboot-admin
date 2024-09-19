@@ -56,9 +56,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
           });
         })
         .catch(error => {
-          if (error.response.data) {
-            message(error.response.data.message, { type: "error" });
-          }
+          message(error.message, { type: "error" });
         })
         .finally(() => (loading.value = false));
     }

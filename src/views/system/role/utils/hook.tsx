@@ -119,7 +119,7 @@ export function useRole(treeRef: Ref) {
         draggable: true
       }
     )
-      .then(() => {
+      .then(async () => {
         switchLoadMap.value[index] = Object.assign(
           {},
           switchLoadMap.value[index],
@@ -127,22 +127,20 @@ export function useRole(treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(async () => {
-          const data = {
-            enabled: row.enabled
-          };
-          await updateRoleEnabled(row.id, data);
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message(`已${row.enabled ? "启用" : "停用"}${row.name}`, {
-            type: "success"
-          });
-        }, 300);
+        const data = {
+          enabled: row.enabled
+        };
+        await updateRoleEnabled(row.id, data);
+        switchLoadMap.value[index] = Object.assign(
+          {},
+          switchLoadMap.value[index],
+          {
+            loading: false
+          }
+        );
+        message(`已${row.enabled ? "启用" : "停用"}${row.name}`, {
+          type: "success"
+        });
       })
       .catch(() => {
         row.enabled = !row.enabled;
@@ -223,12 +221,15 @@ export function useRole(treeRef: Ref) {
 
         FormRef.validate(async valid => {
           if (valid) {
-            if (title === "新增") {
-              await createRole(curData);
+            try {
+              if (title === "新增") {
+                await createRole(curData);
+              } else {
+                await updateRole(row.id, curData);
+              }
               chores();
-            } else {
-              await updateRole(row.id, curData);
-              chores();
+            } catch (error) {
+              message(error.message, { type: "error" });
             }
           }
         });

@@ -111,9 +111,7 @@ export function useMenu() {
     const data = await findMenus(filterNotEmpty(toRaw(form))); // 这里是返回一维数组结构，前端自行处理成树结构
     let newData = data;
     dataList.value = handleTree(newData); // 处理成树结构
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    loading.value = false;
   }
 
   function formatHigherMenuOptions(treeList) {
@@ -198,12 +196,15 @@ export function useMenu() {
               showParent: curData.showParent,
               sort: curData.sort
             };
-            if (title === "新增") {
-              await createMenu(menuModel);
+            try {
+              if (title === "新增") {
+                await createMenu(menuModel);
+              } else {
+                await updateMenu(row.id, menuModel);
+              }
               chores();
-            } else {
-              await updateMenu(row.id, menuModel);
-              chores();
+            } catch (error) {
+              message(error.message, { type: "error" });
             }
           }
         });

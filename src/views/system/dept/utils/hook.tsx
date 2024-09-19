@@ -78,9 +78,7 @@ export function useDept() {
     const { content } = await findDepts(filterNotEmpty(toRaw(form))); // 这里是返回一维数组结构，前端自行处理成树结构
     let newData = content;
     dataList.value = handleTree(newData); // 处理成树结构
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    loading.value = false;
   }
 
   function formatHigherDeptOptions(treeList) {
@@ -136,12 +134,15 @@ export function useDept() {
               enabled: curData.enabled,
               remark: curData.remark
             };
-            if (title === "新增") {
-              await createDept(deptModel);
+            try {
+              if (title === "新增") {
+                await createDept(deptModel);
+              } else {
+                await updateDept(curData.id, deptModel);
+              }
               chores();
-            } else {
-              await updateDept(curData.id, deptModel);
-              chores();
+            } catch (error) {
+              message(error.message, { type: "error" });
             }
           }
         });

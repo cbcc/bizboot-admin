@@ -97,7 +97,7 @@ defineExpose({ getRef });
             v-model="newFormInline.title"
             clearable
             placeholder="请输入菜单名称"
-            maxlength="16"
+            maxlength="30"
           />
         </el-form-item>
       </re-col>

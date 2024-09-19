@@ -1,13 +1,14 @@
 import Axios, {
+  type AxiosError,
   type AxiosInstance,
   type AxiosRequestConfig,
   type CustomParamsSerializer
 } from "axios";
-import type {
-  PureHttpError,
-  RequestMethods,
-  PureHttpResponse,
-  PureHttpRequestConfig
+import {
+  type RequestMethods,
+  type PureHttpResponse,
+  type PureHttpRequestConfig,
+  HttpError
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
@@ -134,8 +135,8 @@ class PureHttp {
         }
         return response.data;
       },
-      (error: PureHttpError) => {
-        const $error = error;
+      (error: AxiosError) => {
+        const $error = new HttpError(error);
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画
         NProgress.done();
