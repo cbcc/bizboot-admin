@@ -1,1 +1,39 @@
-<h1>bizboot-admin</h1>
+# Bizboot
+
+Bizboot 是一个基于 SpringBoot3 + Vue3 的后台管理系统。
+
+- 后端：使用 JDK21、Spring Boot、Spring Security、Jwt、MySql。仓库地址：
+  [bizboot](https://github.com/cbcc/bizboot)
+- 前端：基于开源项目 Pure-Admin 开发而成，使用 Vue3、Element Plus、TypeScript、Pinia
+
+## 快速开始
+
+1. 拉取项目
+
+```bash
+git clone https://github.com/cbcc/bizboot-admin.git
+```
+
+2. 安装依赖
+
+```bash
+cd bizboot-admin
+pnpm install
+```
+
+3. 启动
+
+```bash
+pnpm dev
+```
+
+## 系统功能
+
+基于 RBAC 的权限管理
+
+|     | 功能   | 描述               |
+|-----|------|------------------|
+|     | 用户管理 | 管理系统用户，为用户分配角色   |
+|     | 角色管理 | 管理系统角色，为角色分配权限   |
+|     | 菜单管理 | 管理系统菜单、操作权限、按钮权限 |
+|     | 部门管理 | 管理系统组织架构         |
