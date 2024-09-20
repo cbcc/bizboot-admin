@@ -41,7 +41,6 @@ const {
   handleUpdate,
   handleDelete,
   handleUpload,
-  handleReset,
   handleRole,
   handleSizeChange,
   onSelectionCancel,
@@ -213,18 +212,6 @@ const {
                         @click="handleUpload(row)"
                       >
                         上传头像
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        :class="buttonClass"
-                        link
-                        type="primary"
-                        :size="size"
-                        :icon="useRenderIcon(Password)"
-                        @click="handleReset(row)"
-                      >
-                        重置密码
                       </el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>

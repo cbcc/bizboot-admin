@@ -13,3 +13,10 @@ export const refreshToken = (data?: object) => {
     data
   });
 };
+
+/** 修改密码 */
+export const updatePassword = (data?: object) => {
+  return http.request<null>("patch", baseUrlApi("/users/me/password"), {
+    data
+  });
+};

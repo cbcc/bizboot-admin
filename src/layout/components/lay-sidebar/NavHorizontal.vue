@@ -11,6 +11,7 @@ import LaySidebarItem from "../lay-sidebar/components/SidebarItem.vue";
 import LaySidebarFullScreen from "../lay-sidebar/components/SidebarFullScreen.vue";
 
 import LogoutCircleRLine from "@iconify-icons/ri/logout-circle-r-line";
+import LockPasswordLine from "@iconify-icons/ri/lock-password-line";
 import Setting from "@iconify-icons/ri/settings-3-line";
 
 const menuRef = ref();
@@ -24,6 +25,7 @@ const {
   route,
   title,
   logout,
+  handleUpdatePassword,
   onPanel,
   getLogo,
   username,
@@ -85,6 +87,13 @@ onMounted(() => {
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
+            <el-dropdown-item @click="handleUpdatePassword">
+              <IconifyIconOffline
+                :icon="LockPasswordLine"
+                style="margin: 5px"
+              />
+              修改密码
+            </el-dropdown-item>
             <el-dropdown-item @click="logout">
               <IconifyIconOffline
                 :icon="LogoutCircleRLine"
