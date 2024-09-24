@@ -146,7 +146,7 @@ export function useMenu() {
           activePath: row?.activePath ?? "",
           auths: row?.auths ?? "",
           frameSrc: row?.frameSrc ?? "",
-          frameLoading: row?.frameLoading ?? true,
+          frameLoading: row?.frameLoading ?? false,
           keepAlive: row?.keepAlive ?? false,
           hiddenTag: row?.hiddenTag ?? false,
           fixedTag: row?.fixedTag ?? false,
