@@ -16,7 +16,7 @@ const newFormInline = ref(props.formInline);
 </script>
 
 <template>
-  <el-form :model="newFormInline">
+  <el-form :model="newFormInline" label-width="82px">
     <el-row :gutter="30">
       <re-col>
         <el-form-item label="昵称" prop="nickname">
