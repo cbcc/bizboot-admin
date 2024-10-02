@@ -1,6 +1,13 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-import type { User, Dept, Role, Menu, PageResult } from "@/data/entity";
+import type {
+  User,
+  Dept,
+  Role,
+  Menu,
+  Notification,
+  PageResult
+} from "@/data/entity";
 
 /** 用户-分页查询 */
 export const findUsers = (params?: object) => {
@@ -124,4 +131,32 @@ export const updateMenu = (id: number, data?: object) => {
 /** 菜单-删除 */
 export const deleteMenu = (id: number) => {
   return http.request<null>("delete", baseUrlApi(`/menus/${id}`));
+};
+
+/** 通知公告-分页查询 */
+export const findNotifications = (params?: object) => {
+  return http.request<PageResult<Notification>>(
+    "get",
+    baseUrlApi("/notifications"),
+    { params }
+  );
+};
+
+/** 通知公告-新增 */
+export const createNotification = (data?: object) => {
+  return http.request<Notification>("post", baseUrlApi("/notifications"), {
+    data
+  });
+};
+
+/** 通知公告-修改 */
+export const updateNotification = (id: number, data?: object) => {
+  return http.request<null>("put", baseUrlApi(`/notifications/${id}`), {
+    data
+  });
+};
+
+/** 通知公告-删除 */
+export const deleteNotification = (id: number) => {
+  return http.request<null>("delete", baseUrlApi(`/notifications/${id}`));
 };

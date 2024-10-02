@@ -62,6 +62,16 @@ export type Menu = BaseData & {
 };
 
 /**
+ * 通知
+ */
+export type Notification = BaseData & {
+  title: string;
+  context: string;
+  type: number;
+  active: boolean;
+};
+
+/**
  * 路由
  */
 export type Route = {

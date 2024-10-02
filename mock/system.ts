@@ -1053,5 +1053,44 @@ export default defineFakeRoute([
         }
       };
     }
+  },
+  // 通知公告
+  {
+    url: "/api/notifications",
+    method: "get",
+    response: () => {
+      return {
+        content: [
+          {
+            id: 1,
+            createdTime: "2024-09-15T08:00:00",
+            createdBy: "system",
+            lastModifiedTime: "2024-10-03T09:39:50",
+            lastModifiedBy: "system",
+            title: "公告",
+            context: "测试公告",
+            type: 0,
+            active: true
+          },
+          {
+            id: 2,
+            createdTime: "2024-09-15T08:00:00",
+            createdBy: "system",
+            lastModifiedTime: "2024-09-15T08:00:00",
+            lastModifiedBy: "system",
+            title: "消息",
+            context: "测试消息",
+            type: 1,
+            active: true
+          }
+        ],
+        page: {
+          size: 20,
+          number: 0,
+          totalElements: 2,
+          totalPages: 1
+        }
+      };
+    }
   }
 ]);
