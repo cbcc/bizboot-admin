@@ -1,19 +1,106 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { noticesData } from "./data";
-import NoticeList from "./components/NoticeList.vue";
+import { ref, computed, onMounted } from "vue";
+import NoticeItem from "./components/NoticeItem.vue";
 import BellIcon from "@iconify-icons/ep/bell";
+import { getNotifications, getUnReadNotificationCount } from "@/api/user";
 
-const noticesNum = ref(0);
-const notices = ref(noticesData);
-const activeKey = ref(noticesData[0]?.key);
+const noticesNum = computed(
+  () =>
+    notices.value["notice"].unreadCount + notices.value["message"].unreadCount
+);
+const notices = ref({
+  notice: {
+    key: "0",
+    name: "公告",
+    list: [],
+    unreadCount: 0,
+    emptyText: "暂无公告"
+  },
+  message: {
+    key: "1",
+    name: "消息",
+    list: [],
+    unreadCount: 0,
+    emptyText: "暂无消息"
+  }
+});
 
-notices.value.map(v => (noticesNum.value += v.list.length));
+const activeKey = ref(0);
 
 const getLabel = computed(
   () => item =>
-    item.name + (item.list.length > 0 ? `(${item.list.length})` : "")
+    item.name + (item.unreadCount > 0 ? `(${item.unreadCount})` : "")
 );
+
+onMounted(() => {
+  getUnReadCount();
+  fetchNotification();
+  fetchMessage();
+});
+
+const pages = ref({
+  notice: {
+    number: -1,
+    totalPages: -1
+  },
+  message: {
+    number: -1,
+    totalPages: -1
+  }
+});
+
+function getUnReadCount() {
+  getUnReadNotificationCount({ type: 0 }).then(data => {
+    notices.value["notice"].unreadCount = data;
+  });
+  getUnReadNotificationCount({ type: 1 }).then(data => {
+    notices.value["message"].unreadCount = data;
+  });
+}
+
+function fetchNotification() {
+  loading.value = true;
+  getNotifications({
+    type: 0,
+    page: ++pages.value.notice.number,
+    size: 4
+  }).then(data => {
+    notices.value["notice"].list.push(...data.content);
+    pages.value.notice.number = data.page.number;
+    pages.value.notice.totalPages = data.page.totalPages;
+    loading.value = false;
+  });
+}
+
+function fetchMessage() {
+  loading.value = true;
+  getNotifications({
+    type: 1,
+    page: ++pages.value.message.number,
+    size: 4
+  }).then(data => {
+    notices.value["message"].list.push(...data.content);
+    pages.value.message.number = data.page.number;
+    pages.value.message.totalPages = data.page.totalPages;
+    loading.value = false;
+  });
+}
+
+const loading = ref(false);
+
+const noMoreNotice = computed(
+  () =>
+    pages.value.notice.totalPages >= 0 &&
+    pages.value.notice.number >= pages.value.notice.totalPages
+);
+const disabledNotice = computed(() => loading.value || noMoreNotice.value);
+
+const noMoreMessage = computed(
+  () =>
+    pages.value.message.totalPages >= 0 &&
+    pages.value.message.number >= pages.value.message.totalPages
+);
+const disabledMessage = computed(() => loading.value || noMoreMessage.value);
 </script>
 
 <template>
@@ -38,28 +125,53 @@ const getLabel = computed(
           v-model="activeKey"
           :stretch="true"
           class="dropdown-tabs"
-          :style="{ width: notices.length === 0 ? '200px' : '330px' }"
+          :style="{ width: '330px' }"
         >
-          <el-empty
-            v-if="notices.length === 0"
-            description="暂无消息"
-            :image-size="60"
-          />
-          <span v-else>
-            <template v-for="item in notices" :key="item.key">
-              <el-tab-pane :label="getLabel(item)" :name="`${item.key}`">
-                <el-scrollbar max-height="330px">
-                  <div class="noticeList-container">
-                    <NoticeList :list="item.list" :emptyText="item.emptyText" />
-                  </div>
-                </el-scrollbar>
-              </el-tab-pane>
-            </template>
-          </span>
+          <el-tab-pane
+            v-infinite-scroll="fetchNotification"
+            class="noticeList-container"
+            :infinite-scroll-disabled="disabledNotice"
+            :infinite-scroll-distance="1"
+            :infinite-scroll-immediate="false"
+            :label="getLabel(notices.notice)"
+            :name="0"
+          >
+            <NoticeItem
+              v-for="(item, index) in notices.notice.list"
+              :key="index"
+              :noticeItem="item"
+            />
+            <el-empty
+              v-if="pages.notice.totalPages === 0"
+              :description="notices.notice.emptyText"
+            />
+            <p v-else-if="noMoreNotice">No more</p>
+          </el-tab-pane>
+          <el-tab-pane
+            v-infinite-scroll="fetchNotification"
+            class="noticeList-container"
+            :infinite-scroll-disabled="disabledMessage"
+            :infinite-scroll-distance="1"
+            :infinite-scroll-immediate="false"
+            :label="getLabel(notices.message)"
+            :name="1"
+          >
+            <NoticeItem
+              v-for="(item, index) in notices.message.list"
+              :key="index"
+              :noticeItem="item"
+            />
+            <el-empty
+              v-if="pages.message.totalPages === 0"
+              :description="notices.message.emptyText"
+            />
+            <p v-else-if="noMoreNotice">No more</p>
+          </el-tab-pane>
         </el-tabs>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
+  <!-- 不知道为什么，没有这个注释会导致无限滚动 bug -->
 </template>
 
 <style lang="scss" scoped>
@@ -79,6 +191,11 @@ const getLabel = computed(
 .dropdown-tabs {
   .noticeList-container {
     padding: 15px 24px 0;
+    height: 300px;
+    overflow: auto;
+    p {
+      text-align: center;
+    }
   }
 
   :deep(.el-tabs__header) {

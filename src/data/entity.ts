@@ -72,6 +72,17 @@ export type Notification = BaseData & {
 };
 
 /**
+ * 是否已读通知
+ */
+export type NotificationWithRead = {
+  title: string;
+  context: string;
+  type: number;
+  createdTime: string;
+  read: boolean;
+};
+
+/**
  * 路由
  */
 export type Route = {

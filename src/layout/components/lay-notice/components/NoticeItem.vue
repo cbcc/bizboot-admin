@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ListItem } from "../data";
+import { NotificationItem } from "../data";
 import { ref, PropType, nextTick } from "vue";
 import { useNav } from "@/layout/hooks/useNav";
 import { deviceDetection } from "@pureadmin/utils";
 
 defineProps({
   noticeItem: {
-    type: Object as PropType<ListItem>,
+    type: Object as PropType<NotificationItem>,
     default: () => {}
   }
 });
@@ -76,12 +76,12 @@ function hoverDescription(event, description) {
           </div>
         </el-tooltip>
         <el-tag
-          v-if="noticeItem?.extra"
-          :type="noticeItem?.status"
+          v-if="!noticeItem?.read"
+          :type="'danger'"
           size="small"
           class="notice-title-extra"
         >
-          {{ noticeItem?.extra }}
+          未读
         </el-tag>
       </div>
 
@@ -89,19 +89,19 @@ function hoverDescription(event, description) {
         popper-class="notice-title-popper"
         :effect="tooltipEffect"
         :disabled="!descriptionTooltip"
-        :content="noticeItem.description"
+        :content="noticeItem.context"
         placement="top-start"
       >
         <div
           ref="descriptionRef"
           class="notice-text-description"
-          @mouseover="hoverDescription($event, noticeItem.description)"
+          @mouseover="hoverDescription($event, noticeItem.context)"
         >
-          {{ noticeItem.description }}
+          {{ noticeItem.context }}
         </div>
       </el-tooltip>
       <div class="notice-text-datetime text-[#00000073] dark:text-white">
-        {{ noticeItem.datetime }}
+        {{ noticeItem.createdTime }}
       </div>
     </div>
   </div>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { ListItem } from "../data";
+import { NotificationItem } from "../data";
 import NoticeItem from "./NoticeItem.vue";
 
 defineProps({
   list: {
-    type: Array as PropType<Array<ListItem>>,
+    type: Array as PropType<Array<NotificationItem>>,
     default: () => []
   },
   emptyText: {
